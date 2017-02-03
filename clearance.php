@@ -3,7 +3,7 @@
  * Plugin Name: Clearance Price for Products
  * Description: Add a custom price for products to be calculated in a different way.
  * Author: Botez Costin
- * Version: 1.2
+ * Version: 1.0
  * Author URI: https://ro.linkedin.com/in/costibotez
  */
 
