@@ -3,7 +3,7 @@
  * Plugin Name: Clearance Price for Products
  * Description: Add a custom price for products to be calculated in a different way.
  * Author: Botez Costin
- * Version: 1.0
+ * Version: 1.1
  * Author URI: https://ro.linkedin.com/in/costibotez
  */
 
@@ -14,10 +14,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 // only if WooCommerce is active
 if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 
-	define( 'CLEARANCE_PRICE_PLUGIN_PATH', plugin_basename(__FILE__));
-	define( 'CLEARANCE_PRICE_PLUGIN_DIR_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets/');
+       define( 'CLEARANCE_PRICE_PLUGIN_PATH', plugin_basename(__FILE__));
+       define( 'CLEARANCE_PRICE_PLUGIN_DIR_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets/');
 
-	class WC_Clearance_Price {
+       if ( ! class_exists( 'WC_Clearance_Price' ) ) {
+               class WC_Clearance_Price {
 		function __construct() {
 			// Load textdomain
 			add_action( 'plugins_loaded', array($this, 'clearance_price_load_textdomain' ));
@@ -177,34 +178,34 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 	  	 * 	Use clearance price instead of default price on product or variation product
 	  	 *	It is used only if it exists
 	  	 */
-		function clearance_price_calculate_totals( $cart_object ) {
-			$server_time = strtotime(current_time( 'Y-m-d' ));
-			$from_date = strtotime(get_option('clearance_price_from_date_cb'));
-			$to_date = strtotime(get_option('clearance_price_to_date_cb'));
+               function clearance_price_calculate_totals( $cart ) {
+                       $server_time = current_time( 'timestamp' );
+                       $from_date   = strtotime( get_option( 'clearance_price_from_date_cb' ) );
+                       $to_date     = strtotime( get_option( 'clearance_price_to_date_cb' ) );
 
-			if($from_date <= $server_time && $server_time <= $to_date) {
-				if(get_option('clearance_price_cb') == 1) {
+                       if ( $from_date <= $server_time && $server_time <= $to_date && get_option( 'clearance_price_cb' ) ) {
+                               foreach ( $cart->get_cart() as $cart_item ) {
+                                       $product                = $cart_item['data'];
+                                       $product_clearance_price = $product->get_price();
 
-				    foreach ( $cart_object->cart_contents as $value ) {
-				    	$product_clearance_price = $value['data']->price;
-				    	// If is set to overwrite the regular price
-				    	if(get_option('clearance_price_simple_cb') == 1) {
-					    	$product_clearance_price = get_post_meta( $value['product_id'], '_clearance_price', true );
-					    	$product_clearance_price = (!(empty($product_clearance_price)) && $product_clearance_price != 0 ? $product_clearance_price : $value['data']->price);
-					    }
-				    	// If is Variable Product
-				    	if ( isset($value['variation_id']) && !empty($value['variation_id'])) {
-				    		// If is set from setting to overwrite the variation price
-				    		if(get_option('clearance_price_variable_cb') == 1) {
-					    		$product_clearance_price = get_post_meta( $value['variation_id'], '_clearance_price', true );
-					    		$product_clearance_price = (!(empty($product_clearance_price)) ? $product_clearance_price : $value['data']->price);
-					        }
-				        }
-			            $value['data']->price = $product_clearance_price;
-				    }
-				}
-			}
-		}
+                                       if ( get_option( 'clearance_price_simple_cb' ) ) {
+                                               $meta = get_post_meta( $cart_item['product_id'], '_clearance_price', true );
+                                               if ( '' !== $meta && 0 != $meta ) {
+                                                       $product_clearance_price = $meta;
+                                               }
+                                       }
+
+                                       if ( isset( $cart_item['variation_id'] ) && $cart_item['variation_id'] && get_option( 'clearance_price_variable_cb' ) ) {
+                                               $meta = get_post_meta( $cart_item['variation_id'], '_clearance_price', true );
+                                               if ( '' !== $meta ) {
+                                                       $product_clearance_price = $meta;
+                                               }
+                                       }
+
+                                       $product->set_price( $product_clearance_price );
+                               }
+                       }
+               }
 
 		/**
 		 * Display clearance price HTML input in product admin (Simple Product)
@@ -284,22 +285,22 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		/**
 		 * Change front-end price with clearance price
 		 */
-		function clearance_price_html( $price, $product ){
-			$server_time = strtotime(current_time( 'Y-m-d' ));
-			$from_date = strtotime(get_option('clearance_price_from_date_cb'));
-			$to_date = strtotime(get_option('clearance_price_to_date_cb'));
+               function clearance_price_html( $price, $product ){
+                       $server_time = current_time( 'timestamp' );
+                       $from_date   = strtotime( get_option( 'clearance_price_from_date_cb' ) );
+                       $to_date     = strtotime( get_option( 'clearance_price_to_date_cb' ) );
 
-			if($from_date <= $server_time && $server_time <= $to_date) {
-				if(get_option('clearance_price_cb') == 1) {
-					if($product->is_type('simple')) {
-						$clearance_price = get_post_meta( $product->id, '_clearance_price', true );
-						if(!empty($clearance_price))
-				    		return preg_replace('/[0-9,.]+/', '', $price) . $clearance_price;
-				    }
-		    	}
-		    }
-		    return $price;
-		}
+                       if ( $from_date <= $server_time && $server_time <= $to_date && get_option( 'clearance_price_cb' ) ) {
+                               if ( $product->is_type( 'simple' ) ) {
+                                       $clearance_price = get_post_meta( $product->get_id(), '_clearance_price', true );
+                                       if ( ! empty( $clearance_price ) ) {
+                                               return wc_price( $clearance_price );
+                                       }
+                               }
+                       }
+
+                       return $price;
+               }
 
 		/**
 		 * Add Product Clearance price column in products listing
@@ -369,10 +370,11 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			    }
 		    }
 		    return $html;
-		}
-	}
+               }
+               }
+       }
 
-	new WC_Clearance_Price();
+       new WC_Clearance_Price();
 }
 
 ?>
