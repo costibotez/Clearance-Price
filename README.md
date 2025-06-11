@@ -10,3 +10,5 @@ This plugin allows you to define a *clearance price* for each WooCommerce produc
 
 If you find this plugin useful, consider supporting the development:
 [Buy me a coffee](https://buymeacoffee.com/costinbotez).
+
+For more plugins and updates, visit [Nomad Developer](https://nomad-developer.co.uk/).
