@@ -1,15 +1,27 @@
 <?php
+declare(strict_types=1);
 /*
  * Plugin Name: Clearance Price for Products
  * Description: Add a custom price for products to be calculated in a different way.
  * Author: Botez Costin
  * Version: 1.1
- * Author URI: https://ro.linkedin.com/in/costibotez
+ * Author URI: https://nomad-developer.co.uk/
+ * Requires PHP: 7.4
  */
 
 
 if ( ! defined( 'ABSPATH' ) ) {
   exit; // Exit if accessed directly
+}
+
+register_activation_hook( __FILE__, 'clearance_price_require_php_version' );
+
+function clearance_price_require_php_version(): void {
+    include_once ABSPATH . 'wp-admin/includes/plugin.php';
+    if ( version_compare( PHP_VERSION, '7.4', '<' ) ) {
+        deactivate_plugins( plugin_basename( __FILE__ ) );
+        wp_die( sprintf( esc_html__( 'Clearance Price for Products requires PHP %s or higher.', 'clearance-price' ), '7.4' ) );
+    }
 }
 // only if WooCommerce is active
 if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
@@ -19,7 +31,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
        if ( ! class_exists( 'WC_Clearance_Price' ) ) {
                class WC_Clearance_Price {
-		function __construct() {
+                public function __construct() {
 			// Load textdomain
 			add_action( 'plugins_loaded', array($this, 'clearance_price_load_textdomain' ));
 			// Enqueue front-end scripts if needed
@@ -60,30 +72,30 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		/**
 		 * Load plugin's textdomain
 		 */
-		function clearance_price_load_textdomain() {
+                public function clearance_price_load_textdomain(): void {
 			load_plugin_textdomain( 'clearance-price', false, dirname( CLEARANCE_PRICE_PLUGIN_PATH ) . '/languages/' );
 		}
 
-		function clearance_price_style() {
+                public function clearance_price_style(): void {
 			wp_register_style('clearance-price-style', CLEARANCE_PRICE_PLUGIN_DIR_ASSETS_URL . 'css/style.css');
 	    	wp_enqueue_style('clearance-price-style');
 		}
 
-		function clearance_price_admin_style() {
+                public function clearance_price_admin_style(): void {
 	    	wp_enqueue_script( 'clearance-price-handle', CLEARANCE_PRICE_PLUGIN_DIR_ASSETS_URL . 'js/scripts.js', array(), false, true );
 		}
 
 		/**
 		 * Create the settings page
 		 */
-		function clearance_price_menu_item() {
+                public function clearance_price_menu_item(): void {
 			add_options_page('Clearance Price for WooCommerce', 'Clearance Price for WooCommerce', 'manage_options', 'clearance_price', array($this, 'clearance_price_page'));
 		}
 
 		/**
 		 * Callback for settings page
 		 */
-		function clearance_price_page() { ?>
+                public function clearance_price_page(): void { ?>
 			<div class="wrap">
 	      		<h1><?php _e('Clearance Price Options', 'clearance-price'); ?></h1>
 	      		<form method="post" action="options.php">
@@ -100,7 +112,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		/**
 		 * Add the option on settings page
 		 */
-		function clearance_price_settings() {
+                public function clearance_price_settings(): void {
 			// Sections
 			add_settings_section('clearance_price_general_section', __('General Options', 'clearance-price'), null, 'clearance_price');
 
@@ -133,7 +145,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		/**
 		 * Callback for input on settings page
 		 */
-		function clearance_price_cb_checkbox() { ?>
+                public function clearance_price_cb_checkbox(): void { ?>
 	    	<input type="checkbox" name="clearance_price_cb" value="1" <?php checked(1, get_option('clearance_price_cb'), true); ?> /> <?php _e('Check for Yes', 'clearance-price'); ?>
 	 		<?php
 		}
@@ -141,7 +153,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		/**
 		 * Callback for input on settings page
 		 */
-		function clearance_price_simple_cb_checkbox() { ?>
+                public function clearance_price_simple_cb_checkbox(): void { ?>
 	    	<input type="checkbox" name="clearance_price_simple_cb" value="1" <?php checked(1, get_option('clearance_price_simple_cb'), true); ?> /> <?php _e('Check for Yes', 'clearance-price'); ?>
 	 		<?php
 		}
@@ -149,17 +161,17 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		/**
 		 * Callback for input on settings page
 		 */
-		function clearance_price_variable_cb_checkbox() { ?>
+                public function clearance_price_variable_cb_checkbox(): void { ?>
 	    	<input type="checkbox" name="clearance_price_variable_cb" value="1" <?php checked(1, get_option('clearance_price_variable_cb'), true); ?> /> <?php _e('Check for Yes', 'clearance-price'); ?>
 	 		<?php
 		}
 
-		function clearance_price_from_date_cb_date(){ ?>
+                public function clearance_price_from_date_cb_date(): void{ ?>
      		<input type="date" name="clearance_price_from_date_cb" value="<?php echo get_option('clearance_price_from_date_cb'); ?>" />
      		<?php
 		}
 
-		function clearance_price_to_date_cb_date(){ ?>
+                public function clearance_price_to_date_cb_date(): void{ ?>
      		<input type="date" name="clearance_price_to_date_cb" value="<?php echo get_option('clearance_price_to_date_cb'); ?>" />
      		<?php
 		}
@@ -167,7 +179,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		/**
 		 * Add Settings link in plugins page
 		 */
-		function add_action_links ( $links ) {
+                public function add_action_links( array $links ): array {
 		    $mylinks = array(
 		      '<a href="' . admin_url( 'options-general.php?page=clearance_price' ) . '">' . __('Settings', 'clearance_price') .  '</a>',
 		    );
@@ -178,7 +190,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 	  	 * 	Use clearance price instead of default price on product or variation product
 	  	 *	It is used only if it exists
 	  	 */
-               function clearance_price_calculate_totals( $cart ) {
+               public function clearance_price_calculate_totals( WC_Cart $cart ): void {
                        $server_time = current_time( 'timestamp' );
                        $from_date   = strtotime( get_option( 'clearance_price_from_date_cb' ) );
                        $to_date     = strtotime( get_option( 'clearance_price_to_date_cb' ) );
@@ -210,7 +222,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		/**
 		 * Display clearance price HTML input in product admin (Simple Product)
 		 */
-		function woo_clearance_price_field() {
+                public function woo_clearance_price_field(): void {
 	  		global $woocommerce, $post;
 	  		// Show clearance price on product
 	  		if(get_option('clearance_price_cb') == 1) {
@@ -231,7 +243,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		/**
 		 * Save clearance price in product meta (Simple Product)
 		 */
-		function woo_clearance_price_save( $post_id ){
+                public function woo_clearance_price_save( int $post_id ): void{
 			if(get_option('clearance_price_cb') == 1) {
 				$woocommerce_clearance_price = $_POST['_clearance_price'];
 				// if( !empty( $woocommerce_clearance_price ) )
@@ -242,7 +254,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		/**
 		 * Display Clearance Field in Admin (Variable Product)
 		 */
-		function woo_clearance_price_field_variation($loop, $variation_data, $variation) {
+                public function woo_clearance_price_field_variation( int $loop, array $variation_data, $variation ): void {
 			if(get_option('clearance_price_cb') == 1) {
 				woocommerce_wp_text_input(
 					array(
@@ -260,7 +272,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		/**
 		 * Save Clearance Field in Admin (Variable product)
 		 */
-		function woo_clearance_price_save_variation( $post_id ) {
+                public function woo_clearance_price_save_variation( int $post_id ): void {
 			if(get_option('clearance_price_cb') == 1) {
 				$woocommerce_clearance_price = $_POST['_clearance_price'][ $post_id ];
 				// if( ! empty( $woocommerce_clearance_price ) )
@@ -271,7 +283,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		/**
 		 * Remove Variable product range
 		 */
-		function clearance_price_remove_variation_price( $price, $product ) {
+                public function clearance_price_remove_variation_price( $price, $product ) {
 			$server_time = strtotime(current_time( 'Y-m-d' ));
 			$from_date = strtotime(get_option('clearance_price_from_date_cb'));
 			$to_date = strtotime(get_option('clearance_price_to_date_cb'));
@@ -285,7 +297,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		/**
 		 * Change front-end price with clearance price
 		 */
-               function clearance_price_html( $price, $product ){
+               public function clearance_price_html( $price, $product ){
                        $server_time = current_time( 'timestamp' );
                        $from_date   = strtotime( get_option( 'clearance_price_from_date_cb' ) );
                        $to_date     = strtotime( get_option( 'clearance_price_to_date_cb' ) );
@@ -305,7 +317,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		/**
 		 * Add Product Clearance price column in products listing
 		 */
-		function clearance_product_admin_column($columns){
+                public function clearance_product_admin_column($columns){
 			$new = array();
 
 			foreach ($columns as $key => $value) {
@@ -321,7 +333,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		/**
 		 * Get Clearance price column
 		 */
-		function get_clearance_price_column($column, $post_id) {
+                public function get_clearance_price_column($column, $post_id): void {
 			if(get_option('clearance_price_cb') == 1) {
 				if($column == 'clearance_price') {
 					$clearance_price = get_post_meta( $post_id , '_clearance_price' , true);
@@ -336,7 +348,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		/**
 		 * Delete option from database when uninstall
 		 */
-		function clearance_price_plugin_uninstall() {
+                public function clearance_price_plugin_uninstall(): void {
 	    	delete_option('clearance_price_cb');
 	    	delete_option('clearance_price_simple_cb');
 	    	delete_option('clearance_price_variable_cb');
@@ -347,16 +359,16 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		/**
 		 * Change sale text with clearance if exists
 		 */
-		function clearance_price_replace_sale_text( $html ) {
+                public function clearance_price_replace_sale_text( string $html ) {
 			global $product;
 			if(get_option('clearance_price_cb') == 1) {
-				if('WC_Product_Simple' == get_class($product) && get_option('clearance_price_simple_cb') == 1) {
-					$product_clearance_price = get_post_meta( $product->id, '_clearance_price', true );
+                                if ( $product instanceof WC_Product_Simple && get_option( 'clearance_price_simple_cb' ) == 1 ) {
+                                        $product_clearance_price = get_post_meta( $product->get_id(), '_clearance_price', true );
 			    	if(!(empty($product_clearance_price)) && $product_clearance_price != 0) {
 			    		return str_replace( __( 'Sale!', 'woocommerce' ), __( 'Clearance!', 'woocommerce' ), $html );
 			    	}
 			    }
-			    if('WC_Product_Variable' == get_class($product) && get_option('clearance_price_variable_cb') == 1) {
+                            if ( $product instanceof WC_Product_Variable && get_option( 'clearance_price_variable_cb' ) == 1 ) {
 			    	$show_sale_text = 1;
 			    	foreach ($product->get_available_variations() as $key => $_product) {
 			    		$variation_clearance_price = get_post_meta($_product['variation_id'], '_clearance_price', true);
