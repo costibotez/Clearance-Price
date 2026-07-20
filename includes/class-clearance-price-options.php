@@ -34,6 +34,14 @@ class Clearance_Price_Options {
 	}
 
 	/**
+	 * Whether the original price should be shown struck through
+	 * next to the clearance price.
+	 */
+	public function show_original_price(): bool {
+		return $this->is_enabled() && (bool) get_option( 'clearance_price_show_original_cb' );
+	}
+
+	/**
 	 * Whether the clearance window is currently active.
 	 *
 	 * Dates are compared in the site timezone. An empty "from" date means

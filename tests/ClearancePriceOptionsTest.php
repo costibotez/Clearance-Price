@@ -101,19 +101,23 @@ final class ClearancePriceOptionsTest extends TestCase {
 
 	public function test_toggles_require_master_switch(): void {
 		$GLOBALS['cp_test_options'] = array(
-			'clearance_price_simple_cb'   => '1',
-			'clearance_price_variable_cb' => '1',
+			'clearance_price_simple_cb'        => '1',
+			'clearance_price_variable_cb'      => '1',
+			'clearance_price_show_original_cb' => '1',
 		);
 		$this->assertFalse( $this->options->simple_enabled() );
 		$this->assertFalse( $this->options->variable_enabled() );
+		$this->assertFalse( $this->options->show_original_price() );
 
 		$this->enable(
 			array(
-				'clearance_price_simple_cb'   => '1',
-				'clearance_price_variable_cb' => '1',
+				'clearance_price_simple_cb'        => '1',
+				'clearance_price_variable_cb'      => '1',
+				'clearance_price_show_original_cb' => '1',
 			)
 		);
 		$this->assertTrue( $this->options->simple_enabled() );
 		$this->assertTrue( $this->options->variable_enabled() );
+		$this->assertTrue( $this->options->show_original_price() );
 	}
 }

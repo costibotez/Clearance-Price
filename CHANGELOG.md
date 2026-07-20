@@ -1,6 +1,7 @@
 # Changelog
 
 ## 1.3
+- **New:** optional "Show original price struck through?" display setting — when enabled, simple products and variations show the regular price crossed out next to the clearance price (sale-style) instead of only the clearance price.
 - Refactor the single-file plugin into `includes/` classes (`Options`, `Settings`, `Product_Meta`, `Price_Manager`, `Admin_Columns`) wired by a slim `clearance.php` bootstrap.
 - Add dev tooling: PHPCS (WordPress-Extra + PHPCompatibilityWP), PHPStan (level 5 with WordPress/WooCommerce stubs), PHPUnit unit tests for the date window, price validation and settings sanitizers, and a GitHub Actions CI workflow (lint on PHP 7.4–8.3, analyse, test).
 - Add `readme.txt` (WordPress.org format) and this changelog.

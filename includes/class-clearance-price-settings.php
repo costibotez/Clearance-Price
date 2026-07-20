@@ -78,16 +78,19 @@ class Clearance_Price_Settings {
 		add_settings_section( 'clearance_price_general_section', __( 'General Options', 'clearance-price' ), null, 'clearance_price' );
 		add_settings_section( 'clearance_price_product_type_section', __( 'Product type', 'clearance-price' ), null, 'clearance_price' );
 		add_settings_section( 'clearance_price_date_section', __( 'Date Interval', 'clearance-price' ), null, 'clearance_price' );
+		add_settings_section( 'clearance_price_display_section', __( 'Display', 'clearance-price' ), null, 'clearance_price' );
 
 		add_settings_field( 'clearance_price_cb', __( 'Use clearance price?', 'clearance-price' ), array( $this, 'render_master_checkbox' ), 'clearance_price', 'clearance_price_general_section' );
 		add_settings_field( 'clearance_price_simple_cb', __( 'Overwrite simple product price?', 'clearance-price' ), array( $this, 'render_simple_checkbox' ), 'clearance_price', 'clearance_price_product_type_section' );
 		add_settings_field( 'clearance_price_variable_cb', __( 'Overwrite variable product price?', 'clearance-price' ), array( $this, 'render_variable_checkbox' ), 'clearance_price', 'clearance_price_product_type_section' );
 		add_settings_field( 'clearance_price_from_date_cb', __( 'From date', 'clearance-price' ), array( $this, 'render_from_date' ), 'clearance_price', 'clearance_price_date_section' );
 		add_settings_field( 'clearance_price_to_date_cb', __( 'To date', 'clearance-price' ), array( $this, 'render_to_date' ), 'clearance_price', 'clearance_price_date_section' );
+		add_settings_field( 'clearance_price_show_original_cb', __( 'Show original price struck through?', 'clearance-price' ), array( $this, 'render_show_original_checkbox' ), 'clearance_price', 'clearance_price_display_section' );
 
 		register_setting( 'clearance_price_settings_all', 'clearance_price_cb', array( 'type' => 'boolean', 'sanitize_callback' => array( $this, 'sanitize_checkbox' ), 'default' => 0 ) );
 		register_setting( 'clearance_price_settings_all', 'clearance_price_simple_cb', array( 'type' => 'boolean', 'sanitize_callback' => array( $this, 'sanitize_checkbox' ), 'default' => 0 ) );
 		register_setting( 'clearance_price_settings_all', 'clearance_price_variable_cb', array( 'type' => 'boolean', 'sanitize_callback' => array( $this, 'sanitize_checkbox' ), 'default' => 0 ) );
+		register_setting( 'clearance_price_settings_all', 'clearance_price_show_original_cb', array( 'type' => 'boolean', 'sanitize_callback' => array( $this, 'sanitize_checkbox' ), 'default' => 0 ) );
 		register_setting( 'clearance_price_settings_all', 'clearance_price_from_date_cb', array( 'type' => 'string', 'sanitize_callback' => array( $this, 'sanitize_date' ), 'default' => '' ) );
 		register_setting( 'clearance_price_settings_all', 'clearance_price_to_date_cb', array( 'type' => 'string', 'sanitize_callback' => array( $this, 'sanitize_date' ), 'default' => '' ) );
 	}
@@ -136,6 +139,14 @@ class Clearance_Price_Settings {
 	 */
 	public function render_variable_checkbox(): void { ?>
 		<input type="checkbox" name="clearance_price_variable_cb" value="1" <?php checked( 1, (int) get_option( 'clearance_price_variable_cb' ) ); ?> /> <?php esc_html_e( 'Check for Yes', 'clearance-price' ); ?>
+		<?php
+	}
+
+	/**
+	 * Callback for input on settings page.
+	 */
+	public function render_show_original_checkbox(): void { ?>
+		<input type="checkbox" name="clearance_price_show_original_cb" value="1" <?php checked( 1, (int) get_option( 'clearance_price_show_original_cb' ) ); ?> /> <?php esc_html_e( 'Check for Yes', 'clearance-price' ); ?>
 		<?php
 	}
 

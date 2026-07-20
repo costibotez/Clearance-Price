@@ -78,7 +78,16 @@ class Clearance_Price_Price_Manager {
 			|| ( $product->is_type( 'variation' ) && $this->options->variable_enabled() ) ) {
 			$clearance_price = $this->options->get_clearance_price( $product->get_id() );
 			if ( '' !== $clearance_price ) {
-				return wc_price( wc_get_price_to_display( $product, array( 'price' => (float) $clearance_price ) ) ) . $product->get_price_suffix();
+				$clearance_display = (float) wc_get_price_to_display( $product, array( 'price' => (float) $clearance_price ) );
+
+				if ( $this->options->show_original_price() && '' !== $product->get_regular_price() ) {
+					$regular_display = (float) wc_get_price_to_display( $product, array( 'price' => (float) $product->get_regular_price() ) );
+					if ( $regular_display > $clearance_display ) {
+						return wc_format_sale_price( $regular_display, $clearance_display ) . $product->get_price_suffix();
+					}
+				}
+
+				return wc_price( $clearance_display ) . $product->get_price_suffix();
 			}
 		}
 

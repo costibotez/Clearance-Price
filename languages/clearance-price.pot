@@ -64,6 +64,14 @@ msgid "Overwrite variable product price?"
 msgstr ""
 
 #: clearance.php
+msgid "Display"
+msgstr ""
+
+#: clearance.php
+msgid "Show original price struck through?"
+msgstr ""
+
+#: clearance.php
 msgid "From date"
 msgstr ""
 
