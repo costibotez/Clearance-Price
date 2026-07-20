@@ -184,9 +184,17 @@ class Clearance_Price_Price_Manager {
 			$style .= 'color:' . $color . ';';
 		}
 
-		return '<span class="onsale clearance-badge"' . ( '' !== $style ? ' style="' . esc_attr( $style ) . '"' : '' ) . '>'
+		$badge = '<span class="onsale clearance-badge"' . ( '' !== $style ? ' style="' . esc_attr( $style ) . '"' : '' ) . '>'
 			. esc_html( $this->options->get_badge_text() )
 			. '</span>';
+
+		/**
+		 * Filter the clearance badge markup.
+		 *
+		 * @param string     $badge   Badge HTML.
+		 * @param WC_Product $product Product the badge is shown for.
+		 */
+		return apply_filters( 'clearance_price_badge_html', $badge, $product );
 	}
 
 	/**

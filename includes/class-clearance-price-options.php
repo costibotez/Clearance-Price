@@ -124,11 +124,17 @@ class Clearance_Price_Options {
 		$from = self::sanitize_date_value( get_post_meta( $product_id, '_clearance_price_from', true ) );
 		$to   = self::sanitize_date_value( get_post_meta( $product_id, '_clearance_price_to', true ) );
 
-		if ( '' === $from && '' === $to ) {
-			return $this->is_clearance_window_active();
-		}
+		$active = ( '' === $from && '' === $to )
+			? $this->is_clearance_window_active()
+			: $this->is_window_active( $from, $to );
 
-		return $this->is_window_active( $from, $to );
+		/**
+		 * Filter whether the clearance window is active for a product.
+		 *
+		 * @param bool $active     Whether the window is active.
+		 * @param int  $product_id Parent product ID.
+		 */
+		return (bool) apply_filters( 'clearance_price_window_active', $active, $product_id );
 	}
 
 	/**

@@ -4,7 +4,7 @@ Tags: woocommerce, clearance, price, sale, discount
 Requires at least: 5.6
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.4
+Stable tag: 1.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -47,7 +47,18 @@ Dates are evaluated in the site's timezone. The "To" day is fully included (clea
 
 Deleting the plugin removes its settings. Per-product clearance prices are kept so they survive a reinstall; remove the `_clearance_price` product meta manually if you want a full cleanup.
 
+== Screenshots ==
+
+1. Settings — master switch, product types, date interval, and display options including the customisable badge.
+2. Storefront — struck-through original price, clearance price, the "Clearance!" badge and the "Clearance ends in ..." countdown.
+3. Products list — the "Clearance Price" column, including a variable-product range and an unset product.
+4. Bulk apply a percentage off by category, plus the per-product price and schedule fields.
+
 == Changelog ==
+
+= 1.5 =
+* Developer filters clearance_price_window_active and clearance_price_badge_html
+* Rebuilt README and added banner/screenshot assets
 
 = 1.4 =
 * Per-product clearance schedule fields (From/To) overriding the global date range

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5
+- **New:** developer filters `clearance_price_window_active` (override whether the window is active for a product) and `clearance_price_badge_html` (customise the badge markup), documented alongside the existing `clearance_price_settings_after_form` action.
+- **Docs:** rebuilt `README.md` with a banner, tagline, badges, feature list, screenshots, shortcode/hooks/data reference, and added plugin banner + screenshot assets under `.wordpress-org/`.
+
 ## 1.4
 - **New:** per-product clearance schedule — optional From/To date fields on simple and variable products override the global date range (variations follow their parent's schedule).
 - **New:** bulk tool on the settings page — apply a percentage-off clearance price to every product and variation in a category, or clear a category's clearance prices (requires `manage_woocommerce`, nonce-protected).

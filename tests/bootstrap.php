@@ -40,6 +40,10 @@ function add_filter( ...$args ): bool {
 	return true;
 }
 
+function apply_filters( $hook, $value, ...$args ) {
+	return $value;
+}
+
 function get_option( $name, $default_value = false ) {
 	return array_key_exists( $name, $GLOBALS['cp_test_options'] ) ? $GLOBALS['cp_test_options'][ $name ] : $default_value;
 }
