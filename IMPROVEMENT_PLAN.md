@@ -2,7 +2,7 @@
 
 **Plugin version analysed:** 1.1 · **Files:** `clearance.php` (~390 lines), `assets/js/scripts.js`, `assets/css/style.css` (empty)
 
-> **Status:** Phase 1 (security & correctness hardening) is implemented in version 1.2 on this branch. Phase 2 (class split, PHPCS/PHPStan/PHPUnit tooling, CI, `readme.txt`/`CHANGELOG`) is implemented in version 1.3 — with two conscious deviations: the settings stayed on the (now correctly implemented) Settings API page rather than moving to a WooCommerce settings tab, and the tests are dependency-free unit tests with WP function stubs rather than full `wp-env` integration tests. Phase 3 is still open.
+> **Status:** Phase 1 (security & correctness hardening) is implemented in version 1.2 on this branch. Phase 2 (class split, PHPCS/PHPStan/PHPUnit tooling, CI, `readme.txt`/`CHANGELOG`) is implemented in version 1.3 — with two conscious deviations: the settings stayed on the (now correctly implemented) Settings API page rather than moving to a WooCommerce settings tab, and the tests are dependency-free unit tests with WP function stubs rather than full `wp-env` integration tests. Phase 3 items 1–7 and 11 are implemented in version 1.4 (item 4 as a category bulk-apply tool without quick-edit support; item 5's badge visibility via a `woocommerce_product_is_on_sale` filter; item 7 as a shortcode only, no Gutenberg block or endpoint). Still open: automation rules (8), a Store API/blocks verification pass (9), WP-CLI/CSV support (10), and the deferred sub-items above.
 
 ## 1. What the plugin does today
 

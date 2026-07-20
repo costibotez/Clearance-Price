@@ -25,6 +25,19 @@ class Clearance_Price_Price_Manager {
 		add_action( 'woocommerce_before_calculate_totals', array( $this, 'calculate_totals' ), 20 );
 		add_filter( 'woocommerce_get_price_html', array( $this, 'price_html' ), 200, 2 );
 		add_filter( 'woocommerce_sale_flash', array( $this, 'replace_sale_text' ), 10, 3 );
+		add_filter( 'woocommerce_product_is_on_sale', array( $this, 'mark_on_sale' ), 10, 2 );
+		add_action( 'woocommerce_single_product_summary', array( $this, 'render_countdown' ), 25 );
+		add_action( 'woocommerce_checkout_create_order_line_item', array( $this, 'add_order_item_meta' ), 10, 3 );
+	}
+
+	/**
+	 * Whether the clearance window is active for a product, using the
+	 * parent's schedule for variations.
+	 *
+	 * @param WC_Product $product Product object.
+	 */
+	private function window_active_for( WC_Product $product ): bool {
+		return $this->options->is_clearance_window_active_for( $this->options->get_schedule_id( $product ) );
 	}
 
 	/**
@@ -34,7 +47,7 @@ class Clearance_Price_Price_Manager {
 	 * @param WC_Cart $cart Cart object.
 	 */
 	public function calculate_totals( $cart ): void {
-		if ( ! $cart instanceof WC_Cart || ! $this->options->is_clearance_window_active() ) {
+		if ( ! $cart instanceof WC_Cart || ! $this->options->is_enabled() ) {
 			return;
 		}
 
@@ -43,20 +56,32 @@ class Clearance_Price_Price_Manager {
 			if ( ! $product instanceof WC_Product ) {
 				continue;
 			}
-
-			$clearance_price = '';
-			if ( ! empty( $cart_item['variation_id'] ) ) {
-				if ( $this->options->variable_enabled() ) {
-					$clearance_price = $this->options->get_clearance_price( (int) $cart_item['variation_id'] );
-				}
-			} elseif ( $this->options->simple_enabled() ) {
-				$clearance_price = $this->options->get_clearance_price( (int) $cart_item['product_id'] );
+			// product_id is the parent product, which carries the schedule.
+			if ( ! $this->options->is_clearance_window_active_for( (int) $cart_item['product_id'] ) ) {
+				continue;
 			}
 
+			$clearance_price = $this->get_cart_item_clearance_price( $cart_item );
 			if ( '' !== $clearance_price ) {
 				$product->set_price( $clearance_price );
 			}
 		}
+	}
+
+	/**
+	 * Clearance price applying to a cart item, or '' when none.
+	 *
+	 * @param array $cart_item Cart item data.
+	 */
+	private function get_cart_item_clearance_price( array $cart_item ): string {
+		if ( ! empty( $cart_item['variation_id'] ) ) {
+			return $this->options->variable_enabled()
+				? $this->options->get_clearance_price( (int) $cart_item['variation_id'] )
+				: '';
+		}
+		return $this->options->simple_enabled()
+			? $this->options->get_clearance_price( (int) $cart_item['product_id'] )
+			: '';
 	}
 
 	/**
@@ -70,7 +95,7 @@ class Clearance_Price_Price_Manager {
 	 * @param WC_Product $product Product object.
 	 */
 	public function price_html( $price, $product ) {
-		if ( ! $product instanceof WC_Product || ! $this->options->is_clearance_window_active() ) {
+		if ( ! $product instanceof WC_Product || ! $this->options->is_enabled() || ! $this->window_active_for( $product ) ) {
 			return $price;
 		}
 
@@ -142,12 +167,95 @@ class Clearance_Price_Price_Manager {
 	 * @param WC_Product $product Product object.
 	 */
 	public function replace_sale_text( $html, $post = null, $product = null ) {
-		if ( ! $product instanceof WC_Product || ! $this->options->is_clearance_window_active() ) {
+		if ( ! $product instanceof WC_Product || ! $this->window_active_for( $product ) ) {
 			return $html;
 		}
-		if ( $this->options->product_has_clearance( $product ) ) {
-			return '<span class="onsale clearance-badge">' . esc_html__( 'Clearance!', 'clearance-price' ) . '</span>';
+		if ( ! $this->options->product_has_clearance( $product ) ) {
+			return $html;
 		}
-		return $html;
+
+		$style      = '';
+		$background = $this->options->get_badge_background();
+		$color      = $this->options->get_badge_color();
+		if ( '' !== $background ) {
+			$style .= 'background-color:' . $background . ';';
+		}
+		if ( '' !== $color ) {
+			$style .= 'color:' . $color . ';';
+		}
+
+		return '<span class="onsale clearance-badge"' . ( '' !== $style ? ' style="' . esc_attr( $style ) . '"' : '' ) . '>'
+			. esc_html( $this->options->get_badge_text() )
+			. '</span>';
+	}
+
+	/**
+	 * Treat products with an active clearance price as on sale, so the
+	 * (clearance) badge shows even when no WooCommerce sale price is set.
+	 *
+	 * @param bool       $on_sale Whether WooCommerce considers the product on sale.
+	 * @param WC_Product $product Product object.
+	 */
+	public function mark_on_sale( $on_sale, $product ) {
+		if ( $on_sale || ! $product instanceof WC_Product ) {
+			return $on_sale;
+		}
+		if ( ! $this->options->is_enabled() || ! $this->window_active_for( $product ) ) {
+			return $on_sale;
+		}
+		return $this->options->product_has_clearance( $product );
+	}
+
+	/**
+	 * Show "Clearance ends in ..." on the product page when the applicable
+	 * window has an end date.
+	 */
+	public function render_countdown(): void {
+		if ( ! $this->options->countdown_enabled() ) {
+			return;
+		}
+		global $product;
+		if ( ! $product instanceof WC_Product ) {
+			return;
+		}
+		if ( ! $this->window_active_for( $product ) || ! $this->options->product_has_clearance( $product ) ) {
+			return;
+		}
+
+		$end = $this->options->get_window_end_for( $this->options->get_schedule_id( $product ) );
+		if ( null === $end ) {
+			return;
+		}
+		$now = current_datetime();
+		if ( $end <= $now ) {
+			return;
+		}
+
+		echo '<p class="clearance-countdown">'
+			. esc_html( sprintf( /* translators: %s: human-readable time difference, e.g. "2 days". */ __( 'Clearance ends in %s', 'clearance-price' ), human_time_diff( $now->getTimestamp(), $end->getTimestamp() ) ) )
+			. '</p>';
+	}
+
+	/**
+	 * Record the applied clearance price on the order line item, so
+	 * clearance revenue can be identified later.
+	 *
+	 * @param WC_Order_Item_Product $item          Order line item.
+	 * @param string                $cart_item_key Cart item key.
+	 * @param array                 $values        Cart item data.
+	 */
+	public function add_order_item_meta( $item, $cart_item_key, $values ): void {
+		if ( ! $this->options->is_enabled() || ! is_array( $values ) || ! $item instanceof WC_Order_Item_Product ) {
+			return;
+		}
+		$parent_id = isset( $values['product_id'] ) ? (int) $values['product_id'] : 0;
+		if ( 0 === $parent_id || ! $this->options->is_clearance_window_active_for( $parent_id ) ) {
+			return;
+		}
+
+		$clearance_price = $this->get_cart_item_clearance_price( $values );
+		if ( '' !== $clearance_price ) {
+			$item->add_meta_data( '_clearance_price_applied', $clearance_price, true );
+		}
 	}
 }

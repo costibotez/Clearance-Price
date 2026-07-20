@@ -99,6 +99,53 @@ final class ClearancePriceOptionsTest extends TestCase {
 		);
 	}
 
+	public function test_per_product_window_overrides_global(): void {
+		$this->enable( array( 'clearance_price_to_date_cb' => '2026-07-10' ) );
+		$this->at( '2026-07-15 12:00:00' );
+		$this->assertFalse( $this->options->is_clearance_window_active(), 'Global window should be over.' );
+
+		$GLOBALS['cp_test_post_meta'][20]['_clearance_price_to'] = '2026-07-20';
+		$this->assertTrue( $this->options->is_clearance_window_active_for( 20 ), 'Product schedule should extend past the global window.' );
+
+		$this->enable();
+		$GLOBALS['cp_test_post_meta'][21]['_clearance_price_to'] = '2026-07-10';
+		$this->assertFalse( $this->options->is_clearance_window_active_for( 21 ), 'Product schedule should end before the (open) global window.' );
+	}
+
+	public function test_per_product_window_falls_back_to_global(): void {
+		$this->at( '2026-07-15 12:00:00' );
+
+		$this->enable( array( 'clearance_price_to_date_cb' => '2026-07-20' ) );
+		$this->assertTrue( $this->options->is_clearance_window_active_for( 30 ) );
+
+		$this->enable( array( 'clearance_price_to_date_cb' => '2026-07-10' ) );
+		$this->assertFalse( $this->options->is_clearance_window_active_for( 30 ) );
+	}
+
+	public function test_get_window_end_for(): void {
+		$this->enable( array( 'clearance_price_to_date_cb' => '2026-07-20' ) );
+
+		$end = $this->options->get_window_end_for( 40 );
+		$this->assertInstanceOf( DateTimeImmutable::class, $end );
+		$this->assertSame( '2026-07-20 23:59:59', $end->format( 'Y-m-d H:i:s' ) );
+
+		$GLOBALS['cp_test_post_meta'][40]['_clearance_price_to'] = '2026-08-01';
+		$this->assertSame( '2026-08-01 23:59:59', $this->options->get_window_end_for( 40 )->format( 'Y-m-d H:i:s' ) );
+
+		// A per-product schedule with no end date is open-ended even when
+		// the global range has an end date.
+		$GLOBALS['cp_test_post_meta'][41]['_clearance_price_from'] = '2026-07-01';
+		$this->assertNull( $this->options->get_window_end_for( 41 ) );
+	}
+
+	public function test_badge_text_defaults_and_trims(): void {
+		$this->enable();
+		$this->assertSame( 'Clearance!', $this->options->get_badge_text() );
+
+		$GLOBALS['cp_test_options']['clearance_price_badge_text'] = '  MEGA SALE  ';
+		$this->assertSame( 'MEGA SALE', $this->options->get_badge_text() );
+	}
+
 	public function test_toggles_require_master_switch(): void {
 		$GLOBALS['cp_test_options'] = array(
 			'clearance_price_simple_cb'        => '1',

@@ -23,7 +23,9 @@ class Clearance_Price_Product_Meta {
 		$this->options = $options;
 
 		add_action( 'woocommerce_product_options_general_product_data', array( $this, 'render_simple_field' ) );
+		add_action( 'woocommerce_product_options_general_product_data', array( $this, 'render_schedule_fields' ) );
 		add_action( 'woocommerce_process_product_meta', array( $this, 'save_simple_field' ) );
+		add_action( 'woocommerce_process_product_meta', array( $this, 'save_schedule_fields' ) );
 		add_action( 'woocommerce_product_after_variable_attributes', array( $this, 'render_variation_field' ), 10, 3 );
 		add_action( 'woocommerce_save_product_variation', array( $this, 'save_variation_field' ), 10, 2 );
 	}
@@ -47,6 +49,69 @@ class Clearance_Price_Product_Meta {
 			)
 		);
 		echo '</div>';
+	}
+
+	/**
+	 * Display the per-product clearance schedule fields (simple and
+	 * variable products; variations follow their parent's schedule).
+	 */
+	public function render_schedule_fields(): void {
+		if ( ! $this->options->is_enabled() ) {
+			return;
+		}
+		global $post;
+		$post_id = isset( $post->ID ) ? (int) $post->ID : 0;
+
+		echo '<div class="options_group show_if_simple show_if_variable">';
+		woocommerce_wp_text_input(
+			array(
+				'id'          => '_clearance_price_from',
+				'label'       => __( 'Clearance From date', 'clearance-price' ),
+				'type'        => 'date',
+				'desc_tip'    => true,
+				'description' => __( 'Optional. Overrides the global clearance date range for this product.', 'clearance-price' ),
+				'value'       => get_post_meta( $post_id, '_clearance_price_from', true ),
+			)
+		);
+		woocommerce_wp_text_input(
+			array(
+				'id'          => '_clearance_price_to',
+				'label'       => __( 'Clearance To date', 'clearance-price' ),
+				'type'        => 'date',
+				'desc_tip'    => true,
+				'description' => __( 'Optional. Overrides the global clearance date range for this product.', 'clearance-price' ),
+				'value'       => get_post_meta( $post_id, '_clearance_price_to', true ),
+			)
+		);
+		echo '</div>';
+	}
+
+	/**
+	 * Save the per-product clearance schedule fields.
+	 *
+	 * Nonce and intent are verified upstream by WooCommerce before the
+	 * woocommerce_process_product_meta action fires.
+	 *
+	 * @param int $post_id Product ID.
+	 */
+	public function save_schedule_fields( $post_id ): void {
+		$post_id = (int) $post_id;
+		if ( ! current_user_can( 'edit_product', $post_id ) ) {
+			return;
+		}
+		foreach ( array( '_clearance_price_from', '_clearance_price_to' ) as $key ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified upstream by WooCommerce.
+			if ( ! isset( $_POST[ $key ] ) || is_array( $_POST[ $key ] ) ) {
+				continue;
+			}
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified upstream by WooCommerce.
+			$value = Clearance_Price_Options::sanitize_date_value( wp_unslash( $_POST[ $key ] ) );
+			if ( '' === $value ) {
+				delete_post_meta( $post_id, $key );
+			} else {
+				update_post_meta( $post_id, $key, $value );
+			}
+		}
 	}
 
 	/**

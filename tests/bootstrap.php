@@ -32,6 +32,10 @@ function add_action( ...$args ): bool {
 	return true;
 }
 
+function __( $text, $domain = 'default' ) {
+	return $text;
+}
+
 function add_filter( ...$args ): bool {
 	return true;
 }

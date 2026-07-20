@@ -100,5 +100,85 @@ msgid "Not filled"
 msgstr ""
 
 #: clearance.php
+msgid "Clearance From date"
+msgstr ""
+
+#: clearance.php
+msgid "Clearance To date"
+msgstr ""
+
+#: clearance.php
+msgid "Optional. Overrides the global clearance date range for this product."
+msgstr ""
+
+#: clearance.php
+msgid "Show \"clearance ends in\" notice on product pages?"
+msgstr ""
+
+#: clearance.php
+msgid "Badge text"
+msgstr ""
+
+#: clearance.php
+msgid "Badge background colour"
+msgstr ""
+
+#: clearance.php
+msgid "Badge text colour"
+msgstr ""
+
+#: clearance.php
+msgid "Leave empty for the theme default."
+msgstr ""
+
+#. translators: %s: human-readable time difference, e.g. "2 days".
+#: clearance.php
+msgid "Clearance ends in %s"
+msgstr ""
+
+#: clearance.php
+msgid "Bulk apply"
+msgstr ""
+
+#: clearance.php
+msgid "Set the clearance price of every product in a category to a percentage off its regular price (variations included). Existing clearance prices in the category are overwritten."
+msgstr ""
+
+#: clearance.php
+msgid "Category"
+msgstr ""
+
+#: clearance.php
+msgid "Percentage off"
+msgstr ""
+
+#: clearance.php
+msgid "Select a category"
+msgstr ""
+
+#: clearance.php
+msgid "Apply percentage"
+msgstr ""
+
+#: clearance.php
+msgid "Clear clearance prices"
+msgstr ""
+
+#: clearance.php
+msgid "You are not allowed to do this."
+msgstr ""
+
+#: clearance.php
+msgid "Bulk update failed: choose a category and a percentage between 1 and 99."
+msgstr ""
+
+#. translators: %d: number of products/variations updated.
+#: clearance.php
+msgid "%d product updated."
+msgid_plural "%d products updated."
+msgstr[0] ""
+msgstr[1] ""
+
+#: clearance.php
 msgid "Clearance!"
 msgstr ""

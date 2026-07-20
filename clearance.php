@@ -5,7 +5,7 @@ declare( strict_types=1 );
  * Description: Add a custom clearance price for WooCommerce products, applied during a configurable date range.
  * Author: Botez Costin
  * Author URI: https://nomad-developer.co.uk/
- * Version: 1.3
+ * Version: 1.4
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: clearance-price
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'CLEARANCE_PRICE_VERSION', '1.3' );
+define( 'CLEARANCE_PRICE_VERSION', '1.4' );
 define( 'CLEARANCE_PRICE_PLUGIN_FILE', __FILE__ );
 define( 'CLEARANCE_PRICE_PLUGIN_PATH', plugin_basename( __FILE__ ) );
 define( 'CLEARANCE_PRICE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
@@ -60,6 +60,8 @@ function clearance_price_bootstrap(): void {
 	require_once CLEARANCE_PRICE_PLUGIN_DIR . 'includes/class-clearance-price-product-meta.php';
 	require_once CLEARANCE_PRICE_PLUGIN_DIR . 'includes/class-clearance-price-price-manager.php';
 	require_once CLEARANCE_PRICE_PLUGIN_DIR . 'includes/class-clearance-price-admin-columns.php';
+	require_once CLEARANCE_PRICE_PLUGIN_DIR . 'includes/class-clearance-price-bulk.php';
+	require_once CLEARANCE_PRICE_PLUGIN_DIR . 'includes/class-clearance-price-shortcode.php';
 	require_once CLEARANCE_PRICE_PLUGIN_DIR . 'includes/class-clearance-price-plugin.php';
 
 	Clearance_Price_Plugin::instance();

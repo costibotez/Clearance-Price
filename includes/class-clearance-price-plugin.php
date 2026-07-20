@@ -54,6 +54,20 @@ final class Clearance_Price_Plugin {
 	 */
 	public $admin_columns;
 
+	/**
+	 * Bulk-apply tool component.
+	 *
+	 * @var Clearance_Price_Bulk
+	 */
+	public $bulk;
+
+	/**
+	 * [clearance_products] shortcode component.
+	 *
+	 * @var Clearance_Price_Shortcode
+	 */
+	public $shortcode;
+
 	public static function instance(): self {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
@@ -67,6 +81,8 @@ final class Clearance_Price_Plugin {
 		$this->product_meta  = new Clearance_Price_Product_Meta( $this->options );
 		$this->price_manager = new Clearance_Price_Price_Manager( $this->options );
 		$this->admin_columns = new Clearance_Price_Admin_Columns( $this->options );
+		$this->bulk          = new Clearance_Price_Bulk( $this->options );
+		$this->shortcode     = new Clearance_Price_Shortcode( $this->options );
 
 		add_action( 'init', array( $this, 'load_textdomain' ) );
 	}

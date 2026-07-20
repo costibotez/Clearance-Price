@@ -7,7 +7,12 @@ This plugin allows you to define a *clearance price* for each WooCommerce produc
 - Overwrite prices in the cart when the clearance period is active
 - Show the clearance price (or a clearance price range for variable products) on the shop and product pages
 - Optionally show the original price struck through next to the clearance price
-- Optional replacement of the sale badge with a "Clearance!" label
+- Per-product clearance schedules that override the global date range
+- Bulk tool: apply a percentage-off clearance price to (or clear it from) a whole product category, variations included
+- Customisable badge text and colours; clearance products show the badge even without a WooCommerce sale price
+- Optional "Clearance ends in ..." notice on product pages
+- `[clearance_products]` shortcode listing products with an active clearance price (supports `limit`, `columns`, `orderby`, `order`)
+- Orders record the applied clearance price on each line item (`_clearance_price_applied`), so clearance revenue can be identified
 - Administrative settings to control the date interval and product types
 - "Clearance Price" column in the admin product list
 

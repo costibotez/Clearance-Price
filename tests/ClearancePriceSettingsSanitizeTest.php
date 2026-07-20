@@ -36,6 +36,28 @@ final class ClearancePriceSettingsSanitizeTest extends TestCase {
 		$this->assertSame( $expected, $this->settings->sanitize_date( $raw ) );
 	}
 
+	/**
+	 * @dataProvider color_provider
+	 */
+	public function test_sanitize_color( $raw, string $expected ): void {
+		$this->assertSame( $expected, $this->settings->sanitize_color( $raw ) );
+	}
+
+	public function color_provider(): array {
+		return array(
+			'six digit hex'   => array( '#a1B2c3', '#a1B2c3' ),
+			'three digit hex' => array( '#fff', '#fff' ),
+			'padded'          => array( '  #fff  ', '#fff' ),
+			'empty'           => array( '', '' ),
+			'named colour'    => array( 'red', '' ),
+			'no hash'         => array( 'ff0000', '' ),
+			'bad length'      => array( '#ff', '' ),
+			'non hex chars'   => array( '#gggggg', '' ),
+			'array'           => array( array( '#fff' ), '' ),
+			'css injection'   => array( '#fff;background:url(x)', '' ),
+		);
+	}
+
 	public function date_provider(): array {
 		return array(
 			'valid date'       => array( '2026-01-31', '2026-01-31' ),

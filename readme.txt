@@ -4,7 +4,7 @@ Tags: woocommerce, clearance, price, sale, discount
 Requires at least: 5.6
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.3
+Stable tag: 1.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,6 +20,12 @@ This plugin allows you to define a *clearance price* for each WooCommerce produc
 * Overwrite prices in the cart while the clearance period is active
 * Show the clearance price (or a clearance-aware price range for variable products) on shop and product pages
 * Optionally show the original price struck through next to the clearance price
+* Per-product clearance schedules that override the global date range
+* Bulk tool to apply a percentage-off clearance price to a whole product category
+* Customisable badge text and colours
+* Optional "Clearance ends in ..." notice on product pages
+* [clearance_products] shortcode listing products with an active clearance price
+* Orders record the applied clearance price on each line item
 * Replace the sale badge with a "Clearance!" label
 * "Clearance Price" column in the admin product list
 * Compatible with WooCommerce High-Performance Order Storage
@@ -42,6 +48,14 @@ Dates are evaluated in the site's timezone. The "To" day is fully included (clea
 Deleting the plugin removes its settings. Per-product clearance prices are kept so they survive a reinstall; remove the `_clearance_price` product meta manually if you want a full cleanup.
 
 == Changelog ==
+
+= 1.4 =
+* Per-product clearance schedule fields (From/To) overriding the global date range
+* Bulk apply/clear percentage-off clearance prices by product category
+* Customisable badge text and colours; clearance products count as on sale so the badge always shows
+* Optional "Clearance ends in ..." notice on product pages
+* [clearance_products] shortcode
+* Applied clearance price recorded on order line items
 
 = 1.3 =
 * New display option to show the original price struck through next to the clearance price

@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.4
+- **New:** per-product clearance schedule — optional From/To date fields on simple and variable products override the global date range (variations follow their parent's schedule).
+- **New:** bulk tool on the settings page — apply a percentage-off clearance price to every product and variation in a category, or clear a category's clearance prices (requires `manage_woocommerce`, nonce-protected).
+- **New:** customisable badge — badge text and background/text colours in the Display settings; products with an active clearance price are treated as on sale (`woocommerce_product_is_on_sale`) so the badge shows even without a WooCommerce sale price.
+- **New:** optional "Clearance ends in ..." notice on single product pages when the applicable window has an end date.
+- **New:** `[clearance_products]` shortcode rendering products with an active clearance price through WooCommerce's `[products]` shortcode (`limit`, `columns`, `orderby`, `order` attributes).
+- **New:** the applied clearance price is recorded on order line items as `_clearance_price_applied` for later reporting.
+
 ## 1.3
 - **New:** optional "Show original price struck through?" display setting — when enabled, simple products and variations show the regular price crossed out next to the clearance price (sale-style) instead of only the clearance price.
 - Refactor the single-file plugin into `includes/` classes (`Options`, `Settings`, `Product_Meta`, `Price_Manager`, `Admin_Columns`) wired by a slim `clearance.php` bootstrap.
