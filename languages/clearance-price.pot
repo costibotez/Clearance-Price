@@ -1,0 +1,96 @@
+# Copyright (C) 2026 Botez Costin
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Clearance Price for Products 1.2\n"
+"Report-Msgid-Bugs-To: https://github.com/costibotez/Clearance-Price/issues\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-07-20T00:00:00+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Domain: clearance-price\n"
+
+#. Plugin Name of the plugin
+#: clearance.php
+msgid "Clearance Price for Products"
+msgstr ""
+
+#. Description of the plugin
+#: clearance.php
+msgid "Add a custom clearance price for WooCommerce products, applied during a configurable date range."
+msgstr ""
+
+#. Author of the plugin
+#: clearance.php
+msgid "Botez Costin"
+msgstr ""
+
+#: clearance.php
+msgid "Clearance Price for Products requires PHP %s or higher."
+msgstr ""
+
+#: clearance.php
+msgid "Clearance Price for WooCommerce"
+msgstr ""
+
+#: clearance.php
+msgid "Clearance Price Options"
+msgstr ""
+
+#: clearance.php
+msgid "General Options"
+msgstr ""
+
+#: clearance.php
+msgid "Product type"
+msgstr ""
+
+#: clearance.php
+msgid "Date Interval"
+msgstr ""
+
+#: clearance.php
+msgid "Use clearance price?"
+msgstr ""
+
+#: clearance.php
+msgid "Overwrite simple product price?"
+msgstr ""
+
+#: clearance.php
+msgid "Overwrite variable product price?"
+msgstr ""
+
+#: clearance.php
+msgid "From date"
+msgstr ""
+
+#: clearance.php
+msgid "To date"
+msgstr ""
+
+#: clearance.php
+msgid "Check for Yes"
+msgstr ""
+
+#: clearance.php
+msgid "Settings"
+msgstr ""
+
+#: clearance.php
+msgid "Clearance Price"
+msgstr ""
+
+#: clearance.php
+msgid "Enter the custom price here. Leave empty to use the regular price."
+msgstr ""
+
+#: clearance.php
+msgid "Not filled"
+msgstr ""
+
+#: clearance.php
+msgid "Clearance!"
+msgstr ""

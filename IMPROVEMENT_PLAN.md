@@ -2,6 +2,8 @@
 
 **Plugin version analysed:** 1.1 · **Files:** `clearance.php` (~390 lines), `assets/js/scripts.js`, `assets/css/style.css` (empty)
 
+> **Status:** Phase 1 (security & correctness hardening) is implemented in version 1.2 on this branch. Phases 2–3 are still open.
+
 ## 1. What the plugin does today
 
 A single-file WooCommerce extension that:
