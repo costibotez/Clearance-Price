@@ -1,0 +1,45 @@
+{
+    "name": "costibotez/clearance-price",
+    "description": "Add a custom clearance price for WooCommerce products, applied during a configurable date range.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Botez Costin",
+            "homepage": "https://nomad-developer.co.uk/"
+        }
+    ],
+    "require": {
+        "php": ">=7.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.6",
+        "squizlabs/php_codesniffer": "^3.10",
+        "wp-coding-standards/wpcs": "^3.1",
+        "phpcompatibility/phpcompatibility-wp": "^2.1",
+        "phpstan/phpstan": "^1.11",
+        "szepeviktor/phpstan-wordpress": "^1.3",
+        "php-stubs/woocommerce-stubs": "^9.0",
+        "php-parallel-lint/php-parallel-lint": "^1.4",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "sort-packages": true
+    },
+    "scripts": {
+        "lint": "parallel-lint --exclude vendor --exclude node_modules .",
+        "phpcs": "phpcs",
+        "phpcbf": "phpcbf",
+        "phpstan": "phpstan analyse --no-progress",
+        "test": "phpunit",
+        "check": [
+            "@lint",
+            "@phpcs",
+            "@phpstan",
+            "@test"
+        ]
+    }
+}

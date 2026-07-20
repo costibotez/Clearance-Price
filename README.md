@@ -21,6 +21,17 @@ Dates are evaluated in the site's timezone. The "To" day is fully included (clea
 ## Uninstalling
 Deleting the plugin removes its settings. Per-product clearance prices are kept so they survive a reinstall; remove the `_clearance_price` product meta manually if you want a full cleanup.
 
+## Development
+Install the dev tooling with `composer install`, then:
+
+- `composer lint` — PHP syntax check across the codebase
+- `composer phpcs` — WordPress coding standards (WordPress-Extra + PHPCompatibilityWP)
+- `composer phpstan` — static analysis (level 5, WordPress/WooCommerce stubs)
+- `composer test` — PHPUnit unit tests for the date window, price validation and settings sanitizers
+- `composer check` — all of the above
+
+The same checks run in GitHub Actions on every push and pull request (lint on PHP 7.4–8.3).
+
 If you find this plugin useful, consider supporting the development:
 [Buy me a coffee](https://buymeacoffee.com/costinbotez).
 
